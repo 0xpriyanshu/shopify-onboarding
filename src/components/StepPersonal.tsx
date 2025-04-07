@@ -19,6 +19,8 @@ interface StepPersonalProps {
     primaryLight: string;
     primaryDark: string;
     secondary: string;
+    success: string;
+    gradient: string;
   };
 }
 
@@ -57,8 +59,8 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
           border: '1px solid rgba(0, 0, 0, 0.08)'
         }}
       >
-        <Grid container spacing={3} component="div">
-          <Grid item xs={12} component="div">
+        <Grid {...{ container: true, spacing: 3, component: "div" }}>
+        <Grid {...{ item: true, xs: 12, component: "div" }}>
             <TextField
               fullWidth
               required
@@ -92,7 +94,7 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
             />
           </Grid>
           
-          <Grid item xs={12} sm={6} component="div">
+          <Grid {...{ item: true, xs: 12, sm: 6, component: "div" }}>
             <TextField
               fullWidth
               required
@@ -125,7 +127,7 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
             />
           </Grid>
           
-          <Grid item xs={12} sm={6} component="div">
+          <Grid {...{ item: true, xs: 12, sm: 6, component: "div" }}>
             <TextField
               fullWidth
               required

@@ -23,6 +23,8 @@ interface StepGoalProps {
     primaryLight: string;
     primaryDark: string;
     secondary: string;
+    success: string;
+    gradient: string;
   };
 }
 
@@ -85,9 +87,9 @@ const StepGoal: React.FC<StepGoalProps> = ({
           value={formValues.primaryGoal}
           onChange={handleChange}
         >
-          <Grid container spacing={3} component="div">
+          <Grid {...{ container: true, spacing: 3, component: "div" }}>
             {goals.map((goal) => (
-              <Grid item xs={12} key={goal.value} component="div">
+              <Grid {...{ item: true, xs: 12, component: "div" }} key={goal.value}>
                 <Paper
                   elevation={formValues.primaryGoal === goal.value ? 2 : 0}
                   sx={{

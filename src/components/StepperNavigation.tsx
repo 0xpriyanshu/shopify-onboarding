@@ -18,6 +18,7 @@ interface StepperNavigationProps {
     primaryDark: string;
     secondary: string;
     success: string;
+    gradient: string;
   };
 }
 
@@ -34,7 +35,8 @@ const StepperNavigation: React.FC<StepperNavigationProps> = ({
     primaryLight: '#FF8F3C',
     primaryDark: '#E65100',
     secondary: '#FFF3E0',
-    success: '#4CAF50'
+    success: '#4CAF50',
+    gradient: 'linear-gradient(135deg, #FF8F3C 0%, #FF6B00 100%)'
   }
 }) => {
   return (

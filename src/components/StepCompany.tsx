@@ -25,6 +25,8 @@ interface StepCompanyProps {
     primaryLight: string;
     primaryDark: string;
     secondary: string;
+    success: string;
+    gradient: string;
   };
 }
 
@@ -117,7 +119,7 @@ const StepCompany: React.FC<StepCompanyProps> = ({
               value={formValues.monthlyVisitors}
               onChange={handleChange}
             >
-              <Grid container spacing={1} component="div">
+              <Grid container spacing={1}>
                 {[
                   "Below 10,000",
                   "10,000 - 25,000",
@@ -126,7 +128,7 @@ const StepCompany: React.FC<StepCompanyProps> = ({
                   "100,000 - 200,000",
                   "Above 200,000"
                 ].map((option) => (
-                  <Grid item xs={12} sm={6} key={option} component="div">
+                  <Grid {...{ component: "div", item: true, xs: 12, sm: 6 }} key={option}>
                     <Paper
                       elevation={0}
                       sx={{

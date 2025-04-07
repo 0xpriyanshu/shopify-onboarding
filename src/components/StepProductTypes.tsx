@@ -23,6 +23,8 @@ interface StepProductTypesProps {
     primaryLight: string;
     primaryDark: string;
     secondary: string;
+    success: string;
+    gradient: string;
   };
 }
 
@@ -147,9 +149,9 @@ const StepProductTypes: React.FC<StepProductTypesProps> = ({
                   {category.name}
                 </Typography>
                 
-                <Grid container spacing={1} component="div">
+                <Grid {...{ container: true, spacing: 1, component: "div" }}>
                   {category.items.map((option) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={option.key} component="div">
+                    <Grid {...{ item: true, xs: 12, sm: 6, md: 4, lg: 3, component: "div" }} key={option.key}>
                       <Paper
                         elevation={0}
                         sx={{
