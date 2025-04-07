@@ -45,7 +45,11 @@ const StepCompany: React.FC<StepCompanyProps> = ({
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: themeColors.primaryDark, mb: 3 }}>
+      <Typography 
+        variant="h5" 
+        gutterBottom 
+        sx={{ fontWeight: 600, color: themeColors.primaryDark, mb: 3 }}
+      >
         About Your Company
       </Typography>
       
@@ -100,7 +104,10 @@ const StepCompany: React.FC<StepCompanyProps> = ({
         
         <Box sx={{ mt: 2 }}>
           <FormControl component="fieldset" required fullWidth>
-            <FormLabel component="legend" sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.primary', fontWeight: 500 }}>
+            <FormLabel 
+              component="legend" 
+              sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.primary', fontWeight: 500 }}
+            >
               <PeopleAltIcon sx={{ mr: 1, color: `${themeColors.primary}99` }} />
               Monthly Website Visitors
             </FormLabel>
@@ -110,7 +117,7 @@ const StepCompany: React.FC<StepCompanyProps> = ({
               value={formValues.monthlyVisitors}
               onChange={handleChange}
             >
-              <Grid container spacing={1}>
+              <Grid container spacing={1} component="div">
                 {[
                   "Below 10,000",
                   "10,000 - 25,000",
@@ -119,7 +126,7 @@ const StepCompany: React.FC<StepCompanyProps> = ({
                   "100,000 - 200,000",
                   "Above 200,000"
                 ].map((option) => (
-                  <Grid item xs={12} sm={6} key={option}>
+                  <Grid item xs={12} sm={6} key={option} component="div">
                     <Paper
                       elevation={0}
                       sx={{

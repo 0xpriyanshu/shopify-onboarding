@@ -147,9 +147,9 @@ const StepProductTypes: React.FC<StepProductTypesProps> = ({
                   {category.name}
                 </Typography>
                 
-                <Grid container spacing={1}>
+                <Grid container spacing={1} component="div">
                   {category.items.map((option) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={option.key}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={option.key} component="div">
                       <Paper
                         elevation={0}
                         sx={{

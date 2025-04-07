@@ -57,8 +57,8 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
           border: '1px solid rgba(0, 0, 0, 0.08)'
         }}
       >
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
+        <Grid container spacing={3} component="div">
+          <Grid item xs={12} component="div">
             <TextField
               fullWidth
               required
@@ -92,7 +92,7 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
             />
           </Grid>
           
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6} component="div">
             <TextField
               fullWidth
               required
@@ -125,7 +125,7 @@ const StepPersonal: React.FC<StepPersonalProps> = ({
             />
           </Grid>
           
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6} component="div">
             <TextField
               fullWidth
               required

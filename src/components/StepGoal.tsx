@@ -85,9 +85,9 @@ const StepGoal: React.FC<StepGoalProps> = ({
           value={formValues.primaryGoal}
           onChange={handleChange}
         >
-          <Grid container spacing={3}>
+          <Grid container spacing={3} component="div">
             {goals.map((goal) => (
-              <Grid item xs={12} key={goal.value}>
+              <Grid item xs={12} key={goal.value} component="div">
                 <Paper
                   elevation={formValues.primaryGoal === goal.value ? 2 : 0}
                   sx={{
