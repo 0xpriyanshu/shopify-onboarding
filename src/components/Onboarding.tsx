@@ -154,7 +154,7 @@ const Onboarding: React.FC = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:3000/api/shopify/updateStore', {
+      const res = await fetch('http://aggregator.gobbl.ai/api/shopify/updateStore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
