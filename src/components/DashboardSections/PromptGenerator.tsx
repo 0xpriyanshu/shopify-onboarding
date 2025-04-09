@@ -151,7 +151,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
   const handleSavePrompts = async () => {
     setIsSaving(true);
     setSaveSuccess(false);
-
+  
     try {
       const response = await fetch(`https://aggregator.gobbl.ai/api/shopify/updateCues`, {
         method: 'POST',
@@ -161,19 +161,22 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
           cues: prompts
         })
       });
-
+  
       if (!response.ok) throw new Error('Failed to update cues');
-
+  
       const result = await response.json();
-      if (result.success) {
+  
+      // Check if there's no error in the response
+      if (!result.error) {  // Changed condition here
         onUpdate(prompts);
         setSaveSuccess(true);
-
+  
         // Reset success message after 3 seconds
         setTimeout(() => {
           setSaveSuccess(false);
         }, 3000);
       } else {
+        // If there is an error, display it.
         setError('Failed to save cues: ' + (result.error || 'Unknown error'));
       }
     } catch (error) {
