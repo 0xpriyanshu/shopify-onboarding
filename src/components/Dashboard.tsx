@@ -85,12 +85,17 @@ const Dashboard: React.FC = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState(0);
+  
+  // New state for sellerId (retrieved from onboarding.tsx)
+  const [sellerId, setSellerId] = useState<string>('');
 
-  // Get sellerId from URL parameters instead of localStorage
-  const [sellerId] = useState<string>(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('sellerID') || '';
-  });
+  // Retrieve sellerId from persistent storage (e.g., localStorage)
+  useEffect(() => {
+    const storedSellerId = localStorage.getItem('sellerId');
+    if (storedSellerId) {
+      setSellerId(storedSellerId);
+    }
+  }, []);
 
   // Store data
   const [storeData, setStoreData] = useState({
@@ -109,7 +114,7 @@ const Dashboard: React.FC = () => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Use sellerId from URL directly. Optionally, you can provide a fallback.
+        // Mock data
         const mockData = {
           id: sellerId || 'store_123456',
           name: 'My Awesome Store',
@@ -128,7 +133,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchStoreData();
-  }, [sellerId]);
+  }, []);
 
   // Update store data handlers
   const handleStoreNameUpdate = (name: string) => {
@@ -294,7 +299,7 @@ const Dashboard: React.FC = () => {
                 }
               }}
             >
-              {/* Updated header to include seller ID from URL */}
+              {/* Updated header to include seller ID if present */}
               <Typography 
                 variant="h4" 
                 component="h1" 
@@ -328,7 +333,7 @@ const Dashboard: React.FC = () => {
               {/* Store Information Tab */}
               {activeTab === 0 && (
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid {...{ component: "div", item: true, xs: 12, md: 6 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Store Name</SectionTitle>
@@ -345,7 +350,7 @@ const Dashboard: React.FC = () => {
                     </StyledCard>
                   </Grid>
                   
-                  <Grid item xs={12} md={6}>
+                  <Grid {...{ component: "div", item: true, xs: 12, md: 6 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Store Logo</SectionTitle>
@@ -367,7 +372,7 @@ const Dashboard: React.FC = () => {
               {/* Theme Settings Tab */}
               {activeTab === 1 && (
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid {...{ component: "div", item: true, xs: 12}}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Theme Color</SectionTitle>
@@ -389,7 +394,7 @@ const Dashboard: React.FC = () => {
               {/* Content Generation Tab */}
               {activeTab === 2 && (
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid {...{ component: "div", item: true, xs: 12}}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Prompt Generator</SectionTitle>
@@ -406,7 +411,7 @@ const Dashboard: React.FC = () => {
                     </StyledCard>
                   </Grid>
                   
-                  <Grid item xs={12} sx={{ mt: 3 }}>
+                  <Grid {...{ component: 'div', item: true, xs: 12 }} sx={{ mt: 3 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Loader Text Generator</SectionTitle>
