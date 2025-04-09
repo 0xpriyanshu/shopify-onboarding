@@ -24,6 +24,12 @@ import ThemeColorPicker from './DashboardSections/ThemeColorPicker';
 import PromptGenerator from './DashboardSections/PromptGenerator';
 import LoaderTextGenerator from './DashboardSections/LoaderTextGenerator';
 
+// Define the Cue interface (for prompts)
+interface Cue {
+  title: string;
+  value: string;
+}
+
 // Default theme colors
 const themeColors = {
   primary: '#FF6B00',
@@ -92,13 +98,13 @@ const Dashboard: React.FC = () => {
     return params.get('sellerID') || '';
   });
 
-  // Store data
+  // Store data with prompts using Cue[] and loaderTexts as string[]
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',
     logo: null as string | null,
     themeColor: '#FF6B00',
-    prompts: [] as string[],
+    prompts: [] as Cue[],
     loaderTexts: [] as string[]
   });
   
@@ -106,7 +112,7 @@ const Dashboard: React.FC = () => {
     // Fetch store data
     const fetchStoreData = async () => {
       try {
-        // Simulate API call
+        // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 800));
         
         // Use sellerId from URL directly. Optionally, you can provide a fallback.
@@ -115,8 +121,8 @@ const Dashboard: React.FC = () => {
           name: 'My Awesome Store',
           logo: null,
           themeColor: '#FF6B00',
-          prompts: [],
-          loaderTexts: []
+          prompts: [] as Cue[],
+          loaderTexts: [] as string[]  // loaderTexts remain an array of strings
         };
         
         setStoreData(mockData);
@@ -143,10 +149,12 @@ const Dashboard: React.FC = () => {
     setStoreData(prev => ({ ...prev, themeColor: color }));
   };
   
-  const handlePromptsUpdate = (prompts: string[]) => {
+  // Update prompts as Cue[]
+  const handlePromptsUpdate = (prompts: Cue[]) => {
     setStoreData(prev => ({ ...prev, prompts }));
   };
   
+  // Loader texts remain string[]
   const handleLoaderTextsUpdate = (loaderTexts: string[]) => {
     setStoreData(prev => ({ ...prev, loaderTexts }));
   };
@@ -225,7 +233,6 @@ const Dashboard: React.FC = () => {
       <Container maxWidth="lg">
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
           <Logo />
-          
           <Button
             variant="contained"
             onClick={handleStartOnboarding}
@@ -306,7 +313,6 @@ const Dashboard: React.FC = () => {
               <Typography variant="body1" color="text.secondary" paragraph>
                 Customize your store's appearance and content
               </Typography>
-              
               <Box sx={{ width: '100%', borderBottom: 1, borderColor: 'divider', mb: 3 }}>
                 <Tabs 
                   value={activeTab} 
@@ -324,11 +330,11 @@ const Dashboard: React.FC = () => {
                   <Tab label="Content Generation" />
                 </Tabs>
               </Box>
-              
+
               {/* Store Information Tab */}
               {activeTab === 0 && (
                 <Grid container spacing={3}>
-                  <Grid {...{ component: "div", item: true, xs: 12, md: 6 }}>
+                  <Grid {...{ component: 'div', item: true, xs: 12, md: 6 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Store Name</SectionTitle>
@@ -344,8 +350,7 @@ const Dashboard: React.FC = () => {
                       </CardContent>
                     </StyledCard>
                   </Grid>
-                  
-                  <Grid {...{ component: "div", item: true, xs: 12, md: 6 }}>
+                  <Grid {...{ component: 'div', item: true, xs: 12, md: 6 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Store Logo</SectionTitle>
@@ -363,11 +368,11 @@ const Dashboard: React.FC = () => {
                   </Grid>
                 </Grid>
               )}
-              
+
               {/* Theme Settings Tab */}
               {activeTab === 1 && (
                 <Grid container spacing={3}>
-                  <Grid {...{ component: "div", item: true, xs: 12}}>
+                  <Grid {...{ component: 'div', item: true, xs: 12 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Theme Color</SectionTitle>
@@ -385,16 +390,16 @@ const Dashboard: React.FC = () => {
                   </Grid>
                 </Grid>
               )}
-              
+
               {/* Content Generation Tab */}
               {activeTab === 2 && (
                 <Grid container spacing={3}>
-                  <Grid {...{ component: "div", item: true, xs: 12}}>
+                  <Grid {...{ component: 'div', item: true, xs: 12 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
                         <SectionTitle>Prompt Generator</SectionTitle>
                         <Typography variant="body2" color="text.secondary" paragraph>
-                          Generate and edit custom prompts for your store
+                          Generate and edit custom prompts (cues) for your store
                         </Typography>
                         <PromptGenerator 
                           currentPrompts={storeData.prompts} 
@@ -405,7 +410,6 @@ const Dashboard: React.FC = () => {
                       </CardContent>
                     </StyledCard>
                   </Grid>
-                  
                   <Grid {...{ component: 'div', item: true, xs: 12 }} sx={{ mt: 3 }}>
                     <StyledCard>
                       <CardContent sx={{ p: 3 }}>
