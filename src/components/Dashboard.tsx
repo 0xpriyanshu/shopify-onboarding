@@ -85,17 +85,12 @@ const Dashboard: React.FC = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState(0);
-  
-  // New state for sellerId (retrieved from onboarding.tsx)
-  const [sellerId, setSellerId] = useState<string>('');
 
-  // Retrieve sellerId from persistent storage (e.g., localStorage)
-  useEffect(() => {
-    const storedSellerId = localStorage.getItem('sellerId');
-    if (storedSellerId) {
-      setSellerId(storedSellerId);
-    }
-  }, []);
+  // Get sellerId from URL parameters instead of localStorage
+  const [sellerId] = useState<string>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('sellerID') || '';
+  });
 
   // Store data
   const [storeData, setStoreData] = useState({
@@ -114,7 +109,7 @@ const Dashboard: React.FC = () => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Mock data
+        // Use sellerId from URL directly. Optionally, you can provide a fallback.
         const mockData = {
           id: sellerId || 'store_123456',
           name: 'My Awesome Store',
@@ -133,7 +128,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchStoreData();
-  }, []);
+  }, [sellerId]);
 
   // Update store data handlers
   const handleStoreNameUpdate = (name: string) => {
@@ -299,7 +294,7 @@ const Dashboard: React.FC = () => {
                 }
               }}
             >
-              {/* Updated header to include seller ID if present */}
+              {/* Updated header to include seller ID from URL */}
               <Typography 
                 variant="h4" 
                 component="h1" 
