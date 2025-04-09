@@ -23,9 +23,14 @@ import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+interface Cue {
+  title: string;
+  value: string;
+}
+
 interface PromptGeneratorProps {
-  currentPrompts: string[];
-  onUpdate: (prompts: string[]) => void;
+  currentPrompts: Cue[];
+  onUpdate: (prompts: Cue[]) => void;
   storeId: string;
   themeColors: {
     primary: string;
@@ -41,21 +46,34 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
   storeId,
   themeColors
 }) => {
-  const [prompts, setPrompts] = useState<string[]>(currentPrompts);
-  const [newPrompt, setNewPrompt] = useState('');
+  // Use Cue objects instead of plain strings
+  const [prompts, setPrompts] = useState<Cue[]>(currentPrompts);
+  
+  // For adding new cue (both title and value)
+  const [newCueTitle, setNewCueTitle] = useState('');
+  const [newCueValue, setNewCueValue] = useState('');
+  
+  // For editing an existing cue
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editText, setEditText] = useState('');
+  const [editCue, setEditCue] = useState<Cue | null>(null);
+  
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
+  const [generatedPrompts, setGeneratedPrompts] = useState<Cue[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedPrompts, setExpandedPrompts] = useState(false);
   
+  // Add a new cue from the two new input fields
   const handleAddPrompt = () => {
-    if (newPrompt.trim()) {
-      setPrompts([...prompts, newPrompt.trim()]);
-      setNewPrompt('');
+    if (newCueTitle.trim() && newCueValue.trim()) {
+      const newCue: Cue = {
+        title: newCueTitle.trim(),
+        value: newCueValue.trim()
+      };
+      setPrompts([...prompts, newCue]);
+      setNewCueTitle('');
+      setNewCueValue('');
       setSaveSuccess(false);
     }
   };
@@ -67,24 +85,26 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
   
   const handleEditPrompt = (index: number) => {
     setEditIndex(index);
-    setEditText(prompts[index]);
+    setEditCue(prompts[index]);
   };
   
   const handleSaveEdit = () => {
-    if (editIndex !== null && editText.trim()) {
+    if (editIndex !== null && editCue && editCue.title.trim() && editCue.value.trim()) {
       const newPrompts = [...prompts];
-      newPrompts[editIndex] = editText.trim();
+      newPrompts[editIndex] = { title: editCue.title.trim(), value: editCue.value.trim() };
       setPrompts(newPrompts);
       setEditIndex(null);
+      setEditCue(null);
       setSaveSuccess(false);
     }
   };
   
   const handleCancelEdit = () => {
     setEditIndex(null);
+    setEditCue(null);
   };
   
-  // Modified: Generate Cues using API call
+  // Generate cues using API call
   const handleGeneratePrompts = async () => {
     setIsGenerating(true);
     setError(null);
@@ -97,14 +117,15 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
       if (!response.ok) throw new Error('Failed to generate cues');
       
       const data = await response.json();
-      // Assume the generated cues are located at data.result.result as an array,
-      // otherwise fall back to mock data.
-      const fetchedCues = data?.result?.result || [
-        "Show me snowboards that are not tracked in inventory",
-        "Do you have any gift cards available?",
-        "I'm interested in snowboards with unique features",
-        "Can I see snowboards that are part of a collection?"
+      // Assuming the API response structure:
+      // { "error": false, "result": { "error": false, "result": [ { "title": "minimal snowboard", "value": "I'm looking for a minimal snowboard" }, ... ] } }
+      const defaultCues: Cue[] = [
+        { title: "minimal snowboard", value: "I'm looking for a minimal snowboard" },
+        { title: "complete snowboard", value: "I'm looking for a complete snowboard" },
+        { title: "collection snowboard", value: "I'm interested in the collection snowboard" },
+        { title: "multi-location snowboard", value: "I'm looking for a multi-location snowboard" }
       ];
+      const fetchedCues: Cue[] = data?.result?.result || defaultCues;
       
       setGeneratedPrompts(fetchedCues);
     } catch (error) {
@@ -115,16 +136,16 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
     }
   };
   
-  const handleAddGeneratedPrompt = (prompt: string) => {
-    if (!prompts.includes(prompt)) {
-      setPrompts([...prompts, prompt]);
-      // Remove from generated list
-      setGeneratedPrompts(generatedPrompts.filter(p => p !== prompt));
+  // Add a generated cue (object) if it doesn't already exist (by title)
+  const handleAddGeneratedPrompt = (cue: Cue) => {
+    if (!prompts.some(p => p.title === cue.title && p.value === cue.value)) {
+      setPrompts([...prompts, cue]);
+      setGeneratedPrompts(generatedPrompts.filter(p => p.title !== cue.title));
       setSaveSuccess(false);
     }
   };
   
-  // Modified: Save Cues via API call (Update Cues endpoint)
+  // Save cues using the Update Cues API (POST)
   const handleSavePrompts = async () => {
     setIsSaving(true);
     setSaveSuccess(false);
@@ -166,7 +187,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
   
   return (
     <Box>
-      {/* Generate Prompts Section */}
+      {/* Generate Cues Section */}
       <Box sx={{ mb: 4 }}>
         <Paper
           elevation={0}
@@ -187,7 +208,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
           
           <Typography variant="body2" color="text.secondary" paragraph>
             Generate intelligent cues that will help understand your customers' needs better.
-            These cues will appear during customer interactions.
+            Both the title and description will be displayed. You can add, edit, and delete cues.
           </Typography>
           
           <Button
@@ -210,16 +231,16 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         </Paper>
       </Box>
       
-      {/* Generated Prompts Section */}
+      {/* Generated Cues Section */}
       {generatedPrompts.length > 0 && (
         <Box sx={{ mb: 4 }}>
           <Typography variant="subtitle2" gutterBottom sx={{ color: 'text.secondary', fontWeight: 500 }}>
-            Generated Prompts
+            Generated Cues
           </Typography>
           
           <Grid container spacing={2}>
-            {generatedPrompts.map((prompt, index) => (
-              <Grid {...{ component: 'div', item: true, xs: 12 }} key={`generated-${index}`}>
+            {generatedPrompts.map((cue, index) => (
+              <Grid item xs={12} key={`generated-${index}`}>
                 <Paper
                   elevation={0}
                   sx={{
@@ -234,13 +255,13 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
                   }}
                 >
                   <Typography variant="body2" sx={{ flex: 1 }}>
-                    {prompt}
+                    <strong>{cue.title}</strong>: {cue.value}
                   </Typography>
                   
                   <Button
                     size="small"
                     startIcon={<AddIcon />}
-                    onClick={() => handleAddGeneratedPrompt(prompt)}
+                    onClick={() => handleAddGeneratedPrompt(cue)}
                     sx={{
                       color: themeColors.primary,
                       '&:hover': {
@@ -257,7 +278,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         </Box>
       )}
       
-      {/* Current Prompts Section */}
+      {/* Current Cues Section */}
       <Box>
         <Box 
           sx={{ 
@@ -268,7 +289,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
           }}
         >
           <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-            Your Prompts {prompts.length > 0 ? `(${prompts.length})` : ''}
+            Your Cues {prompts.length > 0 ? `(${prompts.length})` : ''}
           </Typography>
           
           {prompts.length > 4 && (
@@ -289,9 +310,9 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         </Box>
         
         <Grid container spacing={2}>
-          {(expandedPrompts ? prompts : prompts.slice(0, 4)).map((prompt, index) => (
-            <Grid {...{ component: 'div', item: true, xs: 12 }} key={index}>
-              {editIndex === index ? (
+          {(expandedPrompts ? prompts : prompts.slice(0, 4)).map((cue, index) => (
+            <Grid item xs={12} key={index}>
+              {editIndex === index && editCue ? (
                 <Paper
                   elevation={0}
                   sx={{
@@ -304,12 +325,23 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
                 >
                   <TextField
                     fullWidth
-                    multiline
-                    maxRows={3}
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
+                    value={editCue.title}
+                    onChange={(e) =>
+                      setEditCue({ ...editCue, title: e.target.value })
+                    }
+                    label="Title"
+                    variant="outlined"
                     sx={{ mb: 2 }}
-                    inputProps={{ maxLength: 200 }}
+                  />
+                  <TextField
+                    fullWidth
+                    value={editCue.value}
+                    onChange={(e) =>
+                      setEditCue({ ...editCue, value: e.target.value })
+                    }
+                    label="Value"
+                    variant="outlined"
+                    sx={{ mb: 2 }}
                   />
                   
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
@@ -328,7 +360,12 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
                     <Button
                       size="small"
                       variant="contained"
-                      disabled={!editText.trim() || editText.trim() === prompts[index]}
+                      disabled={
+                        !editCue.title.trim() ||
+                        !editCue.value.trim() ||
+                        (editCue.title.trim() === prompts[index].title &&
+                          editCue.value.trim() === prompts[index].value)
+                      }
                       onClick={handleSaveEdit}
                       sx={{
                         bgcolor: themeColors.primary,
@@ -363,7 +400,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
                   }}
                 >
                   <Typography variant="body2" sx={{ flex: 1 }}>
-                    {prompt}
+                    <strong>{cue.title}</strong>: {cue.value}
                   </Typography>
                   
                   <Box>
@@ -402,57 +439,69 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
             }}
           >
             <Typography variant="body2" color="text.secondary">
-              No prompts added yet. Generate prompts or add them manually.
+              No cues added yet. Generate cues or add them manually.
             </Typography>
           </Paper>
         )}
         
-        {/* Add New Prompt */}
+        {/* Add New Cue */}
         <Box sx={{ mt: 3 }}>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField
-              fullWidth
-              placeholder="Enter a new prompt"
-              value={newPrompt}
-              onChange={(e) => setNewPrompt(e.target.value)}
-              variant="outlined"
-              size="medium"
-              InputProps={{
-                sx: {
-                  borderRadius: 2
-                }
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: themeColors.primary,
+          <Grid container spacing={1} alignItems="center">
+            <Grid item xs={12} sm={5}>
+              <TextField
+                fullWidth
+                placeholder="New cue title"
+                value={newCueTitle}
+                onChange={(e) => setNewCueTitle(e.target.value)}
+                variant="outlined"
+                size="medium"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      borderColor: themeColors.primary,
+                    },
                   },
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: themeColors.primary,
-                },
-              }}
-            />
-            
-            <Button
-              variant="contained"
-              onClick={handleAddPrompt}
-              disabled={!newPrompt.trim()}
-              startIcon={<AddIcon />}
-              sx={{
-                bgcolor: themeColors.primary,
-                '&:hover': {
-                  bgcolor: themeColors.primaryDark,
-                },
-                '&.Mui-disabled': {
-                  bgcolor: alpha(themeColors.primary, 0.5),
-                },
-                minWidth: '120px'
-              }}
-            >
-              Add
-            </Button>
-          </Box>
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5}>
+              <TextField
+                fullWidth
+                placeholder="New cue value"
+                value={newCueValue}
+                onChange={(e) => setNewCueValue(e.target.value)}
+                variant="outlined"
+                size="medium"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      borderColor: themeColors.primary,
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button
+                variant="contained"
+                onClick={handleAddPrompt}
+                disabled={!newCueTitle.trim() || !newCueValue.trim()}
+                startIcon={<AddIcon />}
+                sx={{
+                  bgcolor: themeColors.primary,
+                  '&:hover': {
+                    bgcolor: themeColors.primaryDark,
+                  },
+                  '&.Mui-disabled': {
+                    bgcolor: alpha(themeColors.primary, 0.5),
+                  },
+                  minWidth: '120px'
+                }}
+              >
+                Add
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
       
@@ -492,7 +541,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         
         {saveSuccess && (
           <Chip 
-            label="Prompts saved successfully" 
+            label="Cues saved successfully" 
             color="success" 
             variant="filled" 
             sx={{ fontWeight: 500 }}
