@@ -98,7 +98,9 @@ const Dashboard: React.FC = () => {
     return params.get('sellerID') || '';
   });
 
-  // Store data with prompts using Cue[] and loaderTexts as string[]
+  // Store data:
+  // - prompts will be an array of Cue objects for PromptGenerator.
+  // - loaderTexts remain as an array of strings for LoaderTextGenerator.
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',
@@ -109,22 +111,18 @@ const Dashboard: React.FC = () => {
   });
   
   useEffect(() => {
-    // Fetch store data
+    // Fetch store data (simulate API call)
     const fetchStoreData = async () => {
       try {
-        // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Use sellerId from URL directly. Optionally, you can provide a fallback.
         const mockData = {
           id: sellerId || 'store_123456',
           name: 'My Awesome Store',
           logo: null,
           themeColor: '#FF6B00',
           prompts: [] as Cue[],
-          loaderTexts: [] as string[]  // loaderTexts remain an array of strings
+          loaderTexts: [] as string[]
         };
-        
         setStoreData(mockData);
       } catch (error) {
         console.error('Error fetching store data:', error);
@@ -132,7 +130,6 @@ const Dashboard: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchStoreData();
   }, [sellerId]);
 
@@ -140,25 +137,21 @@ const Dashboard: React.FC = () => {
   const handleStoreNameUpdate = (name: string) => {
     setStoreData(prev => ({ ...prev, name }));
   };
-  
   const handleLogoUpdate = (logo: string | null) => {
     setStoreData(prev => ({ ...prev, logo }));
   };
-  
   const handleColorUpdate = (color: string) => {
     setStoreData(prev => ({ ...prev, themeColor: color }));
   };
-  
-  // Update prompts as Cue[]
+  // Prompts are Cue[] now:
   const handlePromptsUpdate = (prompts: Cue[]) => {
     setStoreData(prev => ({ ...prev, prompts }));
   };
-  
   // Loader texts remain string[]
   const handleLoaderTextsUpdate = (loaderTexts: string[]) => {
     setStoreData(prev => ({ ...prev, loaderTexts }));
   };
-  
+
   const handleStartOnboarding = () => {
     navigate('/onboarding');
   };
@@ -169,13 +162,8 @@ const Dashboard: React.FC = () => {
 
   // Logo component
   const Logo = () => (
-    <Box sx={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: 1.5,
-      height: 60,
-    }}>
-      <Box 
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, height: 60 }}>
+      <Box
         component="img"
         src="https://gobbl-bucket.s3.ap-south-1.amazonaws.com/tapAssets/gobbl_coin.webp"
         alt="Gobbl Logo"
@@ -185,15 +173,13 @@ const Dashboard: React.FC = () => {
           objectFit: 'contain',
           filter: 'drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.25))',
           transition: 'transform 0.3s ease',
-          '&:hover': {
-            transform: 'scale(1.05) rotate(5deg)'
-          }
+          '&:hover': { transform: 'scale(1.05) rotate(5deg)' }
         }}
       />
-      <Typography 
-        variant="h4" 
-        sx={{ 
-          fontWeight: 900, 
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 900,
           color: themeColors.headerHighlight,
           letterSpacing: '-0.5px',
           textTransform: 'lowercase',
@@ -208,11 +194,9 @@ const Dashboard: React.FC = () => {
             bottom: -2,
             left: '3%',
             borderRadius: '10px',
-            transition: 'width 0.3s ease',
+            transition: 'width 0.3s ease'
           },
-          '&:hover::after': {
-            width: '90%',
-          }
+          '&:hover::after': { width: '90%' }
         }}
       >
         gobbl
@@ -231,7 +215,16 @@ const Dashboard: React.FC = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box
+          sx={{
+            mb: 4,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2
+          }}
+        >
           <Logo />
           <Button
             variant="contained"
@@ -253,24 +246,24 @@ const Dashboard: React.FC = () => {
             Go to Onboarding
           </Button>
         </Box>
-        
+
         {isLoading ? (
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
-              p: 5, 
+            sx={{
+              p: 5,
               borderRadius: 3,
               textAlign: 'center',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
             }}
           >
-            <LinearProgress 
-              sx={{ 
-                height: 6, 
+            <LinearProgress
+              sx={{
+                height: 6,
                 borderRadius: 3,
                 mb: 2,
                 '& .MuiLinearProgress-bar': {
-                  background: themeColors.gradient,
+                  background: themeColors.gradient
                 }
               }}
             />
@@ -301,11 +294,10 @@ const Dashboard: React.FC = () => {
                 }
               }}
             >
-              {/* Updated header to include seller ID from URL */}
-              <Typography 
-                variant="h4" 
-                component="h1" 
-                gutterBottom 
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
                 sx={{ fontWeight: 700, color: '#333' }}
               >
                 Store Settings {sellerId && `(${sellerId})`}
@@ -314,11 +306,11 @@ const Dashboard: React.FC = () => {
                 Customize your store's appearance and content
               </Typography>
               <Box sx={{ width: '100%', borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-                <Tabs 
-                  value={activeTab} 
+                <Tabs
+                  value={activeTab}
                   onChange={handleTabChange}
-                  variant={isTablet ? "scrollable" : "standard"}
-                  scrollButtons={isTablet ? "auto" : undefined}
+                  variant={isTablet ? 'scrollable' : 'standard'}
+                  scrollButtons={isTablet ? 'auto' : undefined}
                   sx={{
                     '& .MuiTab-root': { fontWeight: 600 },
                     '& .Mui-selected': { color: themeColors.primary },
@@ -341,9 +333,9 @@ const Dashboard: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" paragraph>
                           Set the name of your store as it will appear to customers
                         </Typography>
-                        <StoreTitle 
-                          storeName={storeData.name} 
-                          onUpdate={handleStoreNameUpdate} 
+                        <StoreTitle
+                          storeName={storeData.name}
+                          onUpdate={handleStoreNameUpdate}
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
@@ -357,9 +349,9 @@ const Dashboard: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" paragraph>
                           Upload your store logo for brand recognition
                         </Typography>
-                        <LogoSection 
-                          currentLogo={storeData.logo} 
-                          onUpdate={handleLogoUpdate} 
+                        <LogoSection
+                          currentLogo={storeData.logo}
+                          onUpdate={handleLogoUpdate}
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
@@ -379,9 +371,9 @@ const Dashboard: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" paragraph>
                           Select a primary color for your store's theme
                         </Typography>
-                        <ThemeColorPicker 
-                          currentColor={storeData.themeColor} 
-                          onUpdate={handleColorUpdate} 
+                        <ThemeColorPicker
+                          currentColor={storeData.themeColor}
+                          onUpdate={handleColorUpdate}
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
@@ -401,9 +393,9 @@ const Dashboard: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" paragraph>
                           Generate and edit custom prompts (cues) for your store
                         </Typography>
-                        <PromptGenerator 
-                          currentPrompts={storeData.prompts} 
-                          onUpdate={handlePromptsUpdate} 
+                        <PromptGenerator
+                          currentPrompts={storeData.prompts}
+                          onUpdate={handlePromptsUpdate}
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
@@ -417,9 +409,9 @@ const Dashboard: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" paragraph>
                           Create engaging messages that display during loading screens
                         </Typography>
-                        <LoaderTextGenerator 
-                          currentLoaderTexts={storeData.loaderTexts} 
-                          onUpdate={handleLoaderTextsUpdate} 
+                        <LoaderTextGenerator
+                          currentLoaderTexts={storeData.loaderTexts}  // This remains a string[]
+                          onUpdate={handleLoaderTextsUpdate}           // handler expects string[]
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
