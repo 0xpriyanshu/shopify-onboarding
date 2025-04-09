@@ -13,7 +13,7 @@ import {
   Divider
 } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
-import { OnboardingFormValues } from '../Onboarding';
+import { OnboardingFormValues } from './Onboarding';
 
 interface StepProductTypesProps {
   formValues: OnboardingFormValues;
