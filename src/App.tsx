@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
-import Onboarding from './components/Onboarding/Onboarding'; // Your existing onboarding component
+import Onboarding from './components/Onboarding/Onboarding'; 
 
 const App: React.FC = () => {
   return (
