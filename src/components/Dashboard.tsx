@@ -24,10 +24,20 @@ import ThemeColorPicker from './DashboardSections/ThemeColorPicker';
 import PromptGenerator from './DashboardSections/PromptGenerator';
 import LoaderTextGenerator from './DashboardSections/LoaderTextGenerator';
 
-// Define the Cue interface (for prompts)
-interface Cue {
+// Define the Cue interface used for prompts
+export interface Cue {
   title: string;
   value: string;
+}
+
+// Define an interface for the store data
+interface StoreData {
+  id: string;
+  name: string;
+  logo: string | null;
+  themeColor: string;
+  prompts: Cue[];
+  loaderTexts: string[];
 }
 
 // Default theme colors
@@ -98,16 +108,14 @@ const Dashboard: React.FC = () => {
     return params.get('sellerID') || '';
   });
 
-  // Store data:
-  // - prompts will be an array of Cue objects for PromptGenerator.
-  // - loaderTexts remain as an array of strings for LoaderTextGenerator.
-  const [storeData, setStoreData] = useState({
+  // Use explicit type for store data so that prompts is Cue[]
+  const [storeData, setStoreData] = useState<StoreData>({
     id: '',
     name: '',
-    logo: null as string | null,
+    logo: null,
     themeColor: '#FF6B00',
-    prompts: [] as Cue[],
-    loaderTexts: [] as string[]
+    prompts: [],
+    loaderTexts: [] // remains as string[]
   });
   
   useEffect(() => {
@@ -115,13 +123,14 @@ const Dashboard: React.FC = () => {
     const fetchStoreData = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 800));
-        const mockData = {
+        // Use sellerId from URL directly, with fallback values
+        const mockData: StoreData = {
           id: sellerId || 'store_123456',
           name: 'My Awesome Store',
           logo: null,
           themeColor: '#FF6B00',
-          prompts: [] as Cue[],
-          loaderTexts: [] as string[]
+          prompts: [], // type Cue[]
+          loaderTexts: [] // type string[]
         };
         setStoreData(mockData);
       } catch (error) {
@@ -143,10 +152,12 @@ const Dashboard: React.FC = () => {
   const handleColorUpdate = (color: string) => {
     setStoreData(prev => ({ ...prev, themeColor: color }));
   };
-  // Prompts are Cue[] now:
+
+  // Update handler for prompts now accepts Cue[]
   const handlePromptsUpdate = (prompts: Cue[]) => {
     setStoreData(prev => ({ ...prev, prompts }));
   };
+
   // Loader texts remain string[]
   const handleLoaderTextsUpdate = (loaderTexts: string[]) => {
     setStoreData(prev => ({ ...prev, loaderTexts }));
@@ -246,7 +257,7 @@ const Dashboard: React.FC = () => {
             Go to Onboarding
           </Button>
         </Box>
-
+        
         {isLoading ? (
           <Paper
             elevation={0}
@@ -394,8 +405,8 @@ const Dashboard: React.FC = () => {
                           Generate and edit custom prompts (cues) for your store
                         </Typography>
                         <PromptGenerator
-                          currentPrompts={storeData.prompts}
-                          onUpdate={handlePromptsUpdate}
+                          currentPrompts={storeData.prompts} // Now typed as Cue[]
+                          onUpdate={handlePromptsUpdate}      // Expects Cue[]
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
@@ -410,8 +421,8 @@ const Dashboard: React.FC = () => {
                           Create engaging messages that display during loading screens
                         </Typography>
                         <LoaderTextGenerator
-                          currentLoaderTexts={storeData.loaderTexts}  // This remains a string[]
-                          onUpdate={handleLoaderTextsUpdate}           // handler expects string[]
+                          currentLoaderTexts={storeData.loaderTexts} // Remains string[]
+                          onUpdate={handleLoaderTextsUpdate}          // Expects string[]
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
