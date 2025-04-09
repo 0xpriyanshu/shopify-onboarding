@@ -295,7 +295,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
       {colorMode === 'preset' ? (
         <Grid container spacing={2}>
           {colorPresets.map((color) => (
-            <Grid item xs={6} sm={4} md={3} key={color.hex}>
+            <Grid {...{ component: 'div', item: true, xs: 6, sm: 4, md: 3 }} key={color.hex}>
               <Paper
                 elevation={0}
                 sx={{
@@ -443,7 +443,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
                 </Typography>
                 
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                <Grid {...{ component: 'div', item: true, xs: 12, sm: 6 }}>
                     <Paper
                       elevation={0}
                       sx={{
@@ -461,7 +461,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerProps> = ({
                     </Paper>
                   </Grid>
                   
-                  <Grid item xs={12} sm={6}>
+                  <Grid {...{ component: 'div', item: true, xs: 12, sm: 6 }}>
                     <Paper
                       elevation={0}
                       sx={{

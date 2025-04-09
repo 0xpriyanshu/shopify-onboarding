@@ -204,7 +204,7 @@ const LoaderTextGenerator: React.FC<LoaderTextGeneratorProps> = ({
           
           <Grid container spacing={2}>
             {generatedTexts.map((text, index) => (
-              <Grid item xs={12} key={`generated-${index}`}>
+              <Grid {...{ component: 'div', item: true, xs: 12 }} key={`generated-${index}`}>
                 <Paper
                   elevation={0}
                   sx={{
@@ -275,7 +275,7 @@ const LoaderTextGenerator: React.FC<LoaderTextGeneratorProps> = ({
         
         <Grid container spacing={2}>
           {(expandedTexts ? loaderTexts : loaderTexts.slice(0, 4)).map((text, index) => (
-            <Grid item xs={12} key={index}>
+            <Grid {...{ component: 'div', item: true, xs: 12 }} key={index}>
               {editIndex === index ? (
                 <Paper
                   elevation={0}

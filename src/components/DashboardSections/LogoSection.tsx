@@ -19,6 +19,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ImageIcon from '@mui/icons-material/Image';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 interface LogoSectionProps {
   currentLogo: string | null;
@@ -191,7 +192,7 @@ const LogoSection: React.FC<LogoSectionProps> = ({
     <Box>
       <Grid container spacing={3}>
         {/* Left: Current Logo display */}
-        <Grid item xs={12} md={6}>
+        <Grid {...{ component: 'div', item: true, xs: 12, md: 6 }}>
           <Typography variant="subtitle2" gutterBottom sx={{ color: 'text.secondary', fontWeight: 500 }}>
             Current Logo
           </Typography>
@@ -261,7 +262,7 @@ const LogoSection: React.FC<LogoSectionProps> = ({
         </Grid>
         
         {/* Right: Upload new logo */}
-        <Grid item xs={12} md={6}>
+        <Grid {...{ component: 'div', item: true, xs: 12, md: 6 }}>
           <Typography variant="subtitle2" gutterBottom sx={{ color: 'text.secondary', fontWeight: 500 }}>
             Upload New Logo
           </Typography>
@@ -447,7 +448,7 @@ const LogoSection: React.FC<LogoSectionProps> = ({
               }}
             >
               <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <InfoIcon fontSize="inherit" sx={{ color: alpha(themeColors.primary, 0.7) }} />
+                <InfoOutlinedIcon fontSize="inherit" sx={{ color: alpha(themeColors.primary, 0.7) }} />
                 For best results, use a transparent PNG or SVG with a 1:1 aspect ratio
               </Typography>
             </Paper>

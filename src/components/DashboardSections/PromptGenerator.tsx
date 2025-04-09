@@ -219,7 +219,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
           
           <Grid container spacing={2}>
             {generatedPrompts.map((prompt, index) => (
-              <Grid item xs={12} key={`generated-${index}`}>
+              <Grid {...{ component: 'div', item: true, xs: 12 }} key={`generated-${index}`}>
                 <Paper
                   elevation={0}
                   sx={{
@@ -290,7 +290,7 @@ const PromptGenerator: React.FC<PromptGeneratorProps> = ({
         
         <Grid container spacing={2}>
           {(expandedPrompts ? prompts : prompts.slice(0, 4)).map((prompt, index) => (
-            <Grid item xs={12} key={index}>
+            <Grid {...{ component: 'div', item: true, xs: 12 }} key={index}>
               {editIndex === index ? (
                 <Paper
                   elevation={0}
