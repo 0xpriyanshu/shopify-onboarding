@@ -13,7 +13,7 @@ import {
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import { OnboardingFormValues } from './Onboarding';
+import { OnboardingFormValues } from '../Onboarding';
 
 interface StepGoalProps {
   formValues: OnboardingFormValues;

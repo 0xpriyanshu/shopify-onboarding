@@ -167,6 +167,7 @@ const Onboarding: React.FC = () => {
         if (!responseData.error && responseData.result) {
           // Store the sellerId from the response
           setSellerId(responseData.result.sellerId || '');
+          localStorage.setItem('sellerId', responseData.result.sellerId || '');
         }
         
         setCompleted(true);

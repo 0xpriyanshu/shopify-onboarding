@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import BusinessIcon from '@mui/icons-material/Business';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import { OnboardingFormValues } from './Onboarding';
+import { OnboardingFormValues } from '../Onboarding';
 
 interface StepCompanyProps {
   formValues: OnboardingFormValues;
