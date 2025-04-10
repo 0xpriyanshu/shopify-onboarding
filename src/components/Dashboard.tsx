@@ -23,6 +23,7 @@ import StoreTitle from './DashboardSections/StoreTitle';
 import ThemeColorPicker from './DashboardSections/ThemeColorPicker';
 import PromptGenerator from './DashboardSections/PromptGenerator';
 import LoaderTextGenerator from './DashboardSections/LoaderTextGenerator';
+import PersonalitySelector from './DashboardSections/PersonalitySelector';
 
 // Define the Cue interface used for prompts
 export interface Cue {
@@ -38,6 +39,7 @@ interface StoreData {
   themeColor: string;
   prompts: Cue[];
   loaderTexts: string[];
+  personalities: string[]; // New field for personalities
 }
 
 // Default theme colors
@@ -115,7 +117,8 @@ const Dashboard: React.FC = () => {
     logo: null,
     themeColor: '#FF6B00',
     prompts: [],
-    loaderTexts: [] // remains as string[]
+    loaderTexts: [], // remains as string[]
+    personalities: [] // Initialize personalities array
   });
   
   useEffect(() => {
@@ -130,7 +133,8 @@ const Dashboard: React.FC = () => {
           logo: null,
           themeColor: '#FF6B00',
           prompts: [], // type Cue[]
-          loaderTexts: [] // type string[]
+          loaderTexts: [], // type string[]
+          personalities: ['TRUMP', 'MUSK'] // Default personalities for demo
         };
         setStoreData(mockData);
       } catch (error) {
@@ -161,6 +165,11 @@ const Dashboard: React.FC = () => {
   // Loader texts remain string[]
   const handleLoaderTextsUpdate = (loaderTexts: string[]) => {
     setStoreData(prev => ({ ...prev, loaderTexts }));
+  };
+
+  // New handler for personalities
+  const handlePersonalitiesUpdate = (personalities: string[]) => {
+    setStoreData(prev => ({ ...prev, personalities }));
   };
 
   const handleStartOnboarding = () => {
@@ -331,6 +340,7 @@ const Dashboard: React.FC = () => {
                   <Tab label="Store Information" />
                   <Tab label="Theme Settings" />
                   <Tab label="Content Generation" />
+                  <Tab label="AI Personalities" />
                 </Tabs>
               </Box>
 
@@ -421,8 +431,30 @@ const Dashboard: React.FC = () => {
                           Create engaging messages that display during loading screens
                         </Typography>
                         <LoaderTextGenerator
-                          currentLoaderTexts={storeData.loaderTexts} // Remains string[]
-                          onUpdate={handleLoaderTextsUpdate}          // Expects string[]
+                          currentLoaderTexts={storeData.loaderTexts} 
+                          onUpdate={handleLoaderTextsUpdate}          
+                          storeId={storeData.id}
+                          themeColors={themeColors}
+                        />
+                      </CardContent>
+                    </StyledCard>
+                  </Grid>
+                </Grid>
+              )}
+              
+              {/* AI Configuration Tab (New Tab) */}
+              {activeTab === 3 && (
+                <Grid container spacing={3}>
+                  <Grid {...{ component: 'div', item: true, xs: 12 }}>
+                    <StyledCard>
+                      <CardContent sx={{ p: 3 }}>
+                        <SectionTitle>AI Personalities</SectionTitle>
+                        <Typography variant="body2" color="text.secondary" paragraph>
+                          Select personalities that define your store's AI communication style
+                        </Typography>
+                        <PersonalitySelector
+                          currentPersonalities={storeData.personalities}
+                          onUpdate={handlePersonalitiesUpdate}
                           storeId={storeData.id}
                           themeColors={themeColors}
                         />
