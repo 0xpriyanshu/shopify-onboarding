@@ -285,7 +285,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
               <Box sx={{ mt: 2 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
                   <HelpOutlineIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  Select up to 3 personalities to define your store's unique AI voice
+                  Select up to 3 personalities to define your store's unique AI personality
                 </Typography>
               </Box>
             </Paper>
