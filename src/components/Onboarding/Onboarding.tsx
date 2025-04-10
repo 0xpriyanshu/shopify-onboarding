@@ -13,8 +13,7 @@ import {
   LinearProgress,
   Divider,
   alpha,
-  TextField,
-  IconButton,
+  Button,
   Tooltip
 } from '@mui/material';
 import StepPersonal from './StepPersonal';
@@ -28,10 +27,11 @@ import BusinessIcon from "@mui/icons-material/Business";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import CategoryIcon from "@mui/icons-material/Category";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ExtensionIcon from "@mui/icons-material/Extension";
+import SettingsIcon from "@mui/icons-material/Settings";
 import InfoIcon from "@mui/icons-material/Info";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 // Orange theme colors
 const themeColors = {
@@ -83,8 +83,6 @@ const Onboarding: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [sellerId, setSellerId] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [formValues, setFormValues] = useState<OnboardingFormValues>({
     email: '',
     firstName: '',
@@ -122,18 +120,6 @@ const Onboarding: React.FC = () => {
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
-  const copyToClipboard = () => {
-    if (!sellerId) return;
-    navigator.clipboard.writeText(sellerId).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -269,13 +255,6 @@ const Onboarding: React.FC = () => {
   );
 
   if (completed) {
-    // Mask the seller ID when not visible
-    const maskedSellerId = sellerId 
-      ? isVisible 
-        ? sellerId
-        : sellerId.substring(0, 4) + " •••• •••• •••• " + sellerId.substring(sellerId.length - 4)
-      : "Loading...";
-
     return (
       <Box
         sx={{
@@ -372,117 +351,164 @@ const Onboarding: React.FC = () => {
                 Your onboarding information has been submitted successfully.
               </Typography>
               
-              {/* API Key Display */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  width: '100%',
-                  maxWidth: '500px',
-                  p: 3,
-                  mb: 3,
-                  borderRadius: 2,
-                  backgroundColor: alpha(themeColors.secondary, 0.7),
-                  border: '1px solid',
-                  borderColor: alpha(themeColors.primary, 0.1)
-                }}
-              >
-                <Typography variant="subtitle1" sx={{ color: themeColors.primaryDark, fontWeight: 600, mb: 2 }}>
-                  Your Seller ID (API Key)
-                </Typography>
-                
-                {/* API Key Input Field with Copy and Show/Hide */}
-                <Box 
+              {/* Next Steps Instructions */}
+              <Box sx={{ width: '100%', maxWidth: '650px', mb: 5 }}>
+                <Typography 
+                  variant="h6" 
                   sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    width: '100%',
-                    position: 'relative'
+                    fontWeight: 600, 
+                    mb: 3, 
+                    color: themeColors.primaryDark,
+                    textAlign: 'left',
+                    borderBottom: `2px solid ${alpha(themeColors.primary, 0.2)}`,
+                    pb: 1
                   }}
                 >
-                  <TextField
-                    fullWidth
-                    value={maskedSellerId}
-                    variant="outlined"
-                    size="small"
-                    InputProps={{
-                      readOnly: true,
-                      sx: {
-                        fontFamily: 'monospace',
-                        fontSize: '0.9rem',
-                        letterSpacing: '0.5px',
-                        bgcolor: 'rgba(0,0,0,0.02)',
-                        '&.Mui-focused': {
-                          borderColor: themeColors.primary
-                        }
-                      }
-                    }}
+                  Next Steps to Enable Your Chatbot
+                </Typography>
+                
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 4 }}>
+                  {/* Step 1 */}
+                  <Paper
+                    elevation={2}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'rgba(0,0,0,0.1)',
-                        },
+                      p: 3,
+                      flex: 1,
+                      borderRadius: 2,
+                      borderTop: `3px solid ${themeColors.primary}`,
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
                       }
                     }}
-                  />
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1.5 }}>
+                      <Avatar 
+                        sx={{ 
+                          bgcolor: alpha(themeColors.primary, 0.1), 
+                          color: themeColors.primary,
+                          width: 36,
+                          height: 36
+                        }}
+                      >
+                        <AdminPanelSettingsIcon />
+                      </Avatar>
+                      <Typography variant="subtitle1" fontWeight={600}>Go to Admin Dashboard</Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                      Log in to your Shopify Admin Dashboard and navigate to the Apps section.
+                    </Typography>
+                  </Paper>
                   
-                  <Box sx={{ position: 'absolute', right: 8, display: 'flex' }}>
-                    <Tooltip title={isVisible ? "Hide API key" : "Show API key"}>
-                      <IconButton 
-                        size="small" 
-                        onClick={toggleVisibility}
-                        sx={{ color: isVisible ? themeColors.primary : 'text.secondary' }}
+                  {/* Step 2 */}
+                  <Paper
+                    elevation={2}
+                    sx={{
+                      p: 3,
+                      flex: 1,
+                      borderRadius: 2,
+                      borderTop: `3px solid ${themeColors.primary}`,
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1.5 }}>
+                      <Avatar 
+                        sx={{ 
+                          bgcolor: alpha(themeColors.primary, 0.1), 
+                          color: themeColors.primary,
+                          width: 36,
+                          height: 36
+                        }}
                       >
-                        {isVisible ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                      </IconButton>
-                    </Tooltip>
-                    
-                    <Tooltip title={copied ? "Copied!" : "Copy to clipboard"}>
-                      <IconButton 
-                        size="small" 
-                        onClick={copyToClipboard}
-                        sx={{ color: copied ? themeColors.success : 'text.secondary' }}
-                      >
-                        {copied ? <CheckCircleIcon /> : <ContentCopyIcon />}
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
+                        <ExtensionIcon />
+                      </Avatar>
+                      <Typography variant="subtitle1" fontWeight={600}>Enable Gobbl AI Chatbot</Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'left' }}>
+                      In App Embeds section, find and enable the Gobbl AI Chatbot for your store.
+                    </Typography>
+                  </Paper>
                 </Box>
                 
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'flex-start', 
-                  mt: 2,
-                  color: themeColors.primaryDark
-                }}>
-                  <InfoIcon sx={{ fontSize: 18, mr: 1, mt: '2px' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Keep this Seller ID secure. You'll need it for API requests and when contacting support about your account.
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  p: 3,
-                  width: '100%',
-                  maxWidth: '500px',
-                  borderRadius: 2,
-                  backgroundColor: alpha(themeColors.secondary, 0.5),
-                  border: '1px solid',
-                  borderColor: alpha(themeColors.primary, 0.1)
-                }}
-              >
-                <Typography variant="body1" paragraph sx={{ color: themeColors.primaryDark, fontWeight: 500 }}>
-                  We're processing your information and will be in touch shortly.
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  You can close this window and return to your dashboard.
+                {/* Step 3 - Highlighted */}
+                <Paper
+                  elevation={4}
+                  sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    mb: 3,
+                    background: `linear-gradient(to right, ${alpha(themeColors.secondary, 0.7)}, ${alpha(themeColors.secondary, 0.3)})`,
+                    borderLeft: `4px solid ${themeColors.primary}`,
+                    boxShadow: `0 5px 15px ${alpha(themeColors.primary, 0.1)}`
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                    <Avatar 
+                      sx={{ 
+                        bgcolor: themeColors.primary, 
+                        color: 'white',
+                        width: 44,
+                        height: 44,
+                        mt: 0.5
+                      }}
+                    >
+                      <SettingsIcon />
+                    </Avatar>
+                    <Box sx={{ flex: 1, textAlign: 'left' }}>
+                      <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+                        Customize Your Chatbot
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 2 }}>
+                        After enabling the chatbot, you'll see a "Customize Chatbot" button on the frontend of your store. 
+                        Click this button to go to your dashboard where you can personalize your chatbot's appearance and behavior.
+                      </Typography>
+                      <Box 
+                        sx={{ 
+                          display: 'flex', 
+                          gap: 1, 
+                          alignItems: 'center',
+                          color: themeColors.primaryDark
+                        }}
+                      >
+                        <InfoIcon sx={{ fontSize: 18 }} />
+                        <Typography variant="body2" fontStyle="italic">
+                          The customization dashboard gives you complete control over your AI chatbot experience.
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Paper>
+                
+                <Button
+                  variant="contained"
+                  size="large"
+                  endIcon={<ArrowRightAltIcon />}
+                  sx={{
+                    mt: 2,
+                    mb: 1,
+                    py: 1.5,
+                    px: 4,
+                    borderRadius: 2,
+                    background: themeColors.gradient,
+                    fontWeight: 600,
+                    boxShadow: '0 6px 12px rgba(255, 107, 0, 0.2)',
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                      background: themeColors.gradient,
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 16px rgba(255, 107, 0, 0.3)',
+                    }
+                  }}
+                >
+                  Go to Shopify Dashboard
+                </Button>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                  Need help? Contact our support team
                 </Typography>
               </Box>
             </Box>
@@ -881,4 +907,4 @@ const Onboarding: React.FC = () => {
   );
 };
 
-export default Onboarding;
+export default Onboarding;}
