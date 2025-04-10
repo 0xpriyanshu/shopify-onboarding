@@ -57,7 +57,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [newPersonality, setNewPersonality] = useState<string | null>(null);
+  const [newPersonality, setNewPersonality] = useState<string | undefined>(undefined);
   
   useEffect(() => {
     setOriginalPersonalities(currentPersonalities);
@@ -73,7 +73,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
     setPersonalities(originalPersonalities);
     setIsEditing(false);
     setError(null);
-    setNewPersonality(null);
+    setNewPersonality(undefined);
   };
 
   const handleAddPersonality = () => {
@@ -85,7 +85,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
     
     if (newPersonality && !personalities.includes(newPersonality)) {
       setPersonalities([...personalities, newPersonality]);
-      setNewPersonality(null);
+      setNewPersonality(undefined);
       setError(null);
     }
   };
@@ -265,7 +265,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                 />
                 <IconButton 
                   onClick={handleAddPersonality}
-                  disabled={!newPersonality || personalities.includes(newPersonality || '') || isSaving}
+                  disabled={!newPersonality || personalities.includes(newPersonality) || isSaving || personalities.length >= 3}
                   sx={{ 
                     color: themeColors.primary,
                     bgcolor: alpha(themeColors.primary, 0.1),
@@ -387,7 +387,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                     personalities.map(personality => {
                       const details = getPersonalityDetails(personality);
                       return (
-                        <Grid item key={personality}>
+                        <Grid {...{ component: 'div', item: true }} key={personality}>
                           <Tooltip title={details.description} arrow>
                             <Chip
                               label={details.name}
@@ -403,7 +403,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                       );
                     })
                   ) : (
-                    <Grid item xs={12}>
+                    <Grid {...{ component: 'div', item: true, xs: 12 }}>
                       <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
                         No personalities configured yet. Click Edit to add AI personalities.
                       </Typography>
