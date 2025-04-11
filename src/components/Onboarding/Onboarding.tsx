@@ -126,7 +126,7 @@ const Onboarding: React.FC = () => {
     const selectedProductTypes = Object.entries(formValues.productTypes)
       .filter(([key, value]) => value)
       .map(([key]) => key);
-
+  
     const dataToSend = {
       accessToken,
       storeUrl: shop,
@@ -138,8 +138,9 @@ const Onboarding: React.FC = () => {
       primaryGoal: formValues.primaryGoal,
       productTypes: selectedProductTypes
     };
-
+  
     try {
+      // First API call - Update Store
       const res = await fetch('https://aggregator.gobbl.ai/api/shopify/updateStore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -149,11 +150,22 @@ const Onboarding: React.FC = () => {
       if (res.ok) {
         const responseData = await res.json();
         
-        // Check if the response has the expected structure
         if (!responseData.error && responseData.result) {
-          // Store the sellerId from the response
           setSellerId(responseData.result.sellerId || '');
           localStorage.setItem('sellerId', responseData.result.sellerId || '');
+        }
+        
+        // Second API call - Generate Cues
+        const generateCuesUrl = `https://aggregator.gobbl.ai/api/shopify/generateCues&loaderTexts?accessToken=${accessToken}`;
+        const cuesRes = await fetch(generateCuesUrl, {
+          method: 'GET'
+        });
+        if (cuesRes.ok) {
+          const cuesData = await cuesRes.json();
+          // Optionally process cuesData or log for debugging
+          console.log("Generate Cues API response:", cuesData);
+        } else {
+          console.error("Generate Cues API call failed", await cuesRes.text());
         }
         
         setCompleted(true);
@@ -167,6 +179,7 @@ const Onboarding: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+  
 
   const getStepContent = (step: number) => {
     switch (step) {
