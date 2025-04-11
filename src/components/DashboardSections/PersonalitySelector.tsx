@@ -23,13 +23,44 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-// Define available personalities with their details
-const AVAILABLE_PERSONALITIES = [
-  { id: 'TRUMP', name: 'Donald Trump', avatar: '🇺🇸', description: 'Confident, direct businessman style' },
-  { id: 'MUSK', name: 'Elon Musk', avatar: '🚀', description: 'Innovative, direct communication style' },
-  { id: 'OBAMA', name: 'Barack Obama', avatar: '🗣️', description: 'Measured, inspirational communication' },
-  { id: 'RONALDO', name: 'Cristiano Ronaldo', avatar: '⚽', description: 'Motivational, performance-driven tone' },
-  { id: 'VITALIK', name: 'Vitalik Buterin', avatar: '⚡', description: 'Technical, blockchain-focused perspective' }
+interface Personality {
+  name: string;
+  displayName: string;
+  image: string;
+  description?: string; 
+}
+
+const AVAILABLE_PERSONALITIES: Personality[] = [
+  { 
+    name: 'TRUMP', 
+    displayName: 'Donald Trump', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Donald_Trump_official_portrait.jpg',
+    description: 'Confident, direct businessman style' 
+  },
+  { 
+    name: 'MUSK', 
+    displayName: 'Elon Musk', 
+    image: 'https://futureoflife.org/wp-content/uploads/2020/08/elon_musk_royal_society.jpg',
+    description: 'Innovative, direct communication style' 
+  },
+  { 
+    name: 'OBAMA', 
+    displayName: 'Barack Obama', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg',
+    description: 'Measured, inspirational communication' 
+  },
+  { 
+    name: 'RONALDO', 
+    displayName: 'Cristiano Ronaldo', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg',
+    description: 'Motivational, performance-driven tone' 
+  },
+  { 
+    name: 'VITALIK', 
+    displayName: 'Vitalik Buterin', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Vitalik_Buterin_TechCrunch_London_2015_%28cropped%29.jpg',
+    description: 'Technical, blockchain-focused perspective' 
+  }
 ];
 
 // Interface for component props
@@ -105,13 +136,23 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
     setSaveSuccess(false);
     
     try {
+      // Prepare personality data in the new format
+      const personalitiesData = personalities.map(name => {
+        const personality = AVAILABLE_PERSONALITIES.find(p => p.name === name);
+        return {
+          name: name,
+          displayName: personality?.displayName || name,
+          image: personality?.image || ''
+        };
+      });
+      
       // Call the API endpoint to update personalities
       const response = await fetch("https://aggregator.gobbl.ai/api/shopify/updatePersonalities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sellerId: storeId,
-          personalities: personalities
+          personalities: personalitiesData
         })
       });
       
@@ -146,10 +187,11 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
 
   // Find personality details by ID
   const getPersonalityDetails = (id: string) => {
-    return AVAILABLE_PERSONALITIES.find(p => p.id === id) || {
-      id,
+    const personality = AVAILABLE_PERSONALITIES.find(p => p.name === id);
+    return personality || {
       name: id,
-      avatar: '👤',
+      displayName: id,
+      image: '',
       description: 'Custom personality'
     };
   };
@@ -181,10 +223,10 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                     return (
                       <Chip
                         key={personality}
-                        label={details.name}
+                        label={details.displayName}
                         onDelete={() => handleRemovePersonality(personality)}
                         deleteIcon={<DeleteIcon />}
-                        avatar={<Avatar>{details.avatar}</Avatar>}
+                        avatar={<Avatar src={details.image}>{details.displayName.charAt(0)}</Avatar>}
                         sx={{
                           bgcolor: alpha(themeColors.primary, 0.1),
                           '& .MuiChip-label': { fontWeight: 500 },
@@ -210,18 +252,18 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                       setError(null);
                     }
                   }}
-                  options={AVAILABLE_PERSONALITIES.map(p => p.id)}
-                  getOptionLabel={(option) => getPersonalityDetails(option).name}
+                  options={AVAILABLE_PERSONALITIES.map(p => p.name)}
+                  getOptionLabel={(option) => getPersonalityDetails(option).displayName}
                   renderOption={(props, option) => {
                     const details = getPersonalityDetails(option);
                     return (
                       <li {...props}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ width: 24, height: 24, fontSize: '0.8rem' }}>
-                            {details.avatar}
+                          <Avatar src={details.image} sx={{ width: 24, height: 24, fontSize: '0.8rem' }}>
+                            {details.displayName.charAt(0)}
                           </Avatar>
                           <Box>
-                            <Typography variant="body2">{details.name}</Typography>
+                            <Typography variant="body2">{details.displayName}</Typography>
                             <Typography variant="caption" color="text.secondary">
                               {details.description}
                             </Typography>
@@ -377,7 +419,7 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                       AI Personalities
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 600, color: themeColors.primaryDark }}>
-                      {personalities.length === 0 ? 'No personalities selected' : `${personalities.length} Selected`}
+                      {personalities.length === 0 ? 'No personalities selected' : `${personalities.length}/3 Selected`}
                     </Typography>
                   </Box>
                 </Box>
@@ -390,8 +432,8 @@ const PersonalitySelector: React.FC<PersonalitySelectorProps> = ({
                         <Grid {...{ component: 'div', item: true }} key={personality}>
                           <Tooltip title={details.description} arrow>
                             <Chip
-                              label={details.name}
-                              avatar={<Avatar>{details.avatar}</Avatar>}
+                              label={details.displayName}
+                              avatar={<Avatar src={details.image}>{details.displayName.charAt(0)}</Avatar>}
                               sx={{
                                 bgcolor: alpha(themeColors.primary, 0.1),
                                 '& .MuiChip-label': { fontWeight: 500 },
