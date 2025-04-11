@@ -501,6 +501,7 @@ const Onboarding: React.FC = () => {
                   variant="contained"
                   size="large"
                   endIcon={<ArrowRightAltIcon />}
+                  onClick={() => (window.location.href = 'https://admin.shopify.com/')}
                   sx={{
                     mt: 2,
                     mb: 1,
