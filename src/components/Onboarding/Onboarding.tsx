@@ -477,8 +477,8 @@ const Onboarding: React.FC = () => {
                         Customize Your Chatbot
                       </Typography>
                       <Typography variant="body2" sx={{ mb: 2 }}>
-                        After enabling the chatbot, you'll see a "Customize Chatbot" button on the frontend of your store. 
-                        Click this button to go to your dashboard where you can personalize your chatbot's appearance and behavior.
+                      After you've toggled the Gobbl AI Chatbot on in your theme (Online Store → Themes → Customize → App embeds), stay inside the Shopify theme editor. 
+                      In the right-hand preview pane (not on your live store URL), you'll now see a “Customize Chatbot” button overlay. Click that to jump straight into your Gobbl dashboard, where you can tailor your chatbot's look and behavior.
                       </Typography>
                       <Box 
                         sx={{ 
