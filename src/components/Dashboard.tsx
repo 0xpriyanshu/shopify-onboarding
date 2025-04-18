@@ -246,25 +246,7 @@ const Dashboard: React.FC = () => {
           }}
         >
           <Logo />
-          <Button
-            variant="contained"
-            onClick={handleStartOnboarding}
-            sx={{
-              borderRadius: '30px',
-              py: 1,
-              px: 3,
-              fontWeight: 600,
-              background: themeColors.gradient,
-              boxShadow: `0 4px 10px ${alpha(themeColors.primary, 0.3)}`,
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                boxShadow: `0 6px 15px ${alpha(themeColors.primary, 0.4)}`,
-                transform: 'translateY(-2px)'
-              }
-            }}
-          >
-            Go to Onboarding
-          </Button>
+          {/* “Go to Onboarding” button removed */}
         </Box>
         
         {isLoading ? (
