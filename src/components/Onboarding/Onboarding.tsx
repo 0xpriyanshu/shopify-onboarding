@@ -707,6 +707,8 @@ const Onboarding: React.FC = () => {
                   Need help setting up?
                 </Typography>
                 <Typography 
+                  component="a"
+                  href="mailto:priaynshu@gobbbl.ai"
                   variant="body2" 
                   sx={{ 
                     color: themeColors.primary, 
