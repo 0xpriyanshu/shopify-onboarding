@@ -122,27 +122,40 @@ const Dashboard: React.FC = () => {
   });
   
   useEffect(() => {
-    // Fetch store data (simulate API call)
     const fetchStoreData = async () => {
       try {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        // Use sellerId from URL directly, with fallback values
-        const mockData: StoreData = {
-          id: sellerId || 'store_123456',
-          name: 'My Awesome Store',
-          logo: null,
-          themeColor: '#FF6B00',
-          prompts: [], // type Cue[]
-          loaderTexts: [], // type string[]
-          personalities: ['TRUMP', 'MUSK'] // Default personalities for demo
+        const res = await fetch(
+          `https://aggregator.gobbl.ai/api/shopify/getSellerData?sellerId=${sellerId}`
+        );
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const json = await res.json();
+  
+        if (json.error) {
+          throw new Error('API returned error: ' + JSON.stringify(json));
+        }
+  
+        const r = json.result;
+        const realData: StoreData = {
+          id: r._id,
+          name: r.botTitle,
+          logo: r.image,
+          themeColor: r.theme || '#FF6B00',
+          prompts: (r.cues || []).map((c: any) => ({
+            title: c.title,
+            value: c.value
+          })),
+          loaderTexts: r.loaderTexts || [],
+          personalities: (r.personalities || []).map((p: any) => p.name)
         };
-        setStoreData(mockData);
-      } catch (error) {
-        console.error('Error fetching store data:', error);
+  
+        setStoreData(realData);
+      } catch (err) {
+        console.error('Error fetching store data:', err);
       } finally {
         setIsLoading(false);
       }
     };
+  
     fetchStoreData();
   }, [sellerId]);
 
